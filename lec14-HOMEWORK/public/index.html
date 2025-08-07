@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management</title>
+  <style>
+    body { 
+        font-family: Arial, sans-serif; 
+        margin: 20px;
+    }
+    h1 {
+        color: #333;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%; 
+        margin-top: 20px; 
+    }
+    th, td {
+        border: 1px solid #ddd; 
+        padding: 8px; 
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    a {
+        display: inline-block; 
+        padding: 8px 16px; 
+        background-color: #4CAF50; 
+        color: white; 
+        text-decoration: none; 
+        margin-bottom: 20px;
+    } 
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>User Management</h1>
+      <a href="/register" class="btn">+ Add New User</a>
+    </header>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <!-- Date Added column removed -->
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        <tr>
+          <td colspan="4" class="empty-message">Loading users...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadUsers() {
+      try {
+        const response = await fetch('/users');
+        const users = await response.json();
+        
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '';
+        
+        if (users.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="4" class="empty-message">No users found. Add your first user!</td>
+            </tr>
+          `;
+          return;
+        }
+        
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.role}</td>
+            <!-- Date cell removed -->
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        document.getElementById('usersTableBody').innerHTML = `
+          <tr>
+            <td colspan="4" class="empty-message" style="color: #e74c3c;">Error loading users. Please try again.</td>
+          </tr>
+        `;
+      }
+    }
+    
+    // Load users on page load
+    document.addEventListener('DOMContentLoaded', loadUsers);
+  </script>
+</body>
+</html>
