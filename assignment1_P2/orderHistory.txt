@@ -1,1 +1,0 @@
-{"user":"Ramneet","product":"phone","amount":50000}
