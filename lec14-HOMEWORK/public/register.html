@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+        color: #333;
+    }
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+    input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    #message {
+        margin-top: 15px;
+        padding: 10px;
+    }
+    .success {
+        background-color: #dff0d8;
+        border: 1px solid #d6e9c6;
+    }
+    .error {
+        background-color: #f2dede;
+        border: 1px solid #ebccd1;
+    }
+    a {
+        display: block;
+        margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Register New User</h1>
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required placeholder="Enter full name">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="Enter email">
+      </div>
+      
+      <div class="form-group">
+        <label for="role">User Role</label>
+        <select id="role" name="role" required>
+          <option value="">Select role</option>
+          <option value="admin">Admin</option>
+          <option value="manager">Manager</option>
+          <option value="developer">Developer</option>
+          <option value="designer">Designer</option>
+          <option value="tester">Tester</option>
+        </select>
+      </div>
+      
+      <button type="submit">Register User</button>
+    </form>
+    <div id="message"></div>
+    <a href="/" class="back-link">Back to Home</a>
+  </div>
+
+  <script>
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        role: document.getElementById('role').value
+      };
+
+      try {
+        const response = await fetch('/add-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          document.getElementById('message').innerHTML = `
+            <div class="success">${result.message}</div>
+          `;
+          
+          // Clear form
+          document.getElementById('registrationForm').reset();
+          
+          // Redirect to home after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else {
+          document.getElementById('message').innerHTML = `
+            <div class="error">${result.error}</div>
+          `;
+        }
+      } catch (error) {
+        document.getElementById('message').innerHTML = `
+          <div class="error">Network error. Please try again.</div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
