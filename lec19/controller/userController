@@ -1,0 +1,54 @@
+const express=require('express');
+const router=express.Router();
+const Blog = require("../models/Blog");
+let blogcontroller=require("../controller/blog")
+console.log(blogcontroller)
+
+module.exports.postAddBlog = async (req, res) => {
+    try {
+        const { title, body, userId } = req.body;
+
+        if (!title || !body || !userId) {
+            return res.status(400).json({
+                success: false,
+                message: "Title, body, and userId are required"
+            });
+        }
+
+        // Create new blog
+        const newBlog = new Blog({
+            title,
+            body,
+            date: Date.now(),
+            userId
+        });
+
+        await newBlog.save();
+
+        // Find user and update blogs array
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        user.blogs.push(newBlog._id);
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Blog added successfully",
+            data: newBlog
+        });
+
+    } catch (err) {
+        console.error("Error adding blog:", err);
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: err.message
+        });
+    }
+};

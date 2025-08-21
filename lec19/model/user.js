@@ -12,3 +12,7 @@ const addUSer=new Schema({
     ]
 });
 module.exports=mongoose.model('Users',addUSer)
+
+
+
+//ref se models connect hone hai usme doosre model ka naam bhejte hai
